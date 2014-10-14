@@ -20,7 +20,9 @@ EkkoLightbox = ( element, options ) ->
 	content = ''
 
 	@modal_id = if @options.modal_id then @options.modal_id else 'ekkoLightbox-' + Math.floor((Math.random() * 1000) + 1)
-	header = '<div class="modal-header"'+(if @options.title or @options.always_show_close then '' else ' style="display:none"')+'><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">' + (@options.title || "&nbsp;") + '</h4></div>'
+	url_expand = '<button type="button" class="close url" data-dismiss="modal" aria-hidden="true" style="margin-right:10px"><span class="glyphicon glyphicon-fullscreen"></span></button>'
+	close = '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'
+	header = '<div class="modal-header"'+(if @options.title or @options.always_show_close then '' else ' style="display:none"')+'>'+(close)+(if @options.url then url_expand else '')+'<h4 class="modal-title">' + (@options.title || "&nbsp;") + '</h4></div>'
 	footer = '<div class="modal-footer"'+(if @options.footer then '' else ' style="display:none"')+'>' + @options.footer + '</div>'
 	$(document.body).append '<div id="' + @modal_id + '" class="ekko-lightbox modal fade" tabindex="-1"><div class="modal-dialog"><div class="modal-content">' + header + '<div class="modal-body"><div class="ekko-lightbox-container"><div></div></div></div>' + footer + '</div></div></div>'
 
@@ -48,6 +50,10 @@ EkkoLightbox = ( element, options ) ->
 		bottom: parseFloat(@modal_dialog.css('padding-bottom')) + parseFloat(@modal_content.css('padding-bottom')) + parseFloat(@modal_body.css('padding-bottom'))
 		left: parseFloat(@modal_dialog.css('padding-left')) + parseFloat(@modal_content.css('padding-left')) + parseFloat(@modal_body.css('padding-left'))
 	}
+
+	url = @options.url
+	@modal.find('.url').click () ->
+		window.open(url)
 
 	@modal
 	.on('show.bs.modal', @options.onShow.bind(@))
@@ -293,6 +299,7 @@ $.fn.ekkoLightbox = ( options ) ->
 			remote : $this.attr('data-remote') || $this.attr('href')
 			gallery_parent_selector : $this.attr('data-parent')
 			type : $this.attr('data-type')
+			url : $this.attr('data-url')
 		}, options, $this.data())
 		new EkkoLightbox(@, options)
 		@

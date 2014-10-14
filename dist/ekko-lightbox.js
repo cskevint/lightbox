@@ -13,7 +13,7 @@ License: https://github.com/ashleydw/lightbox/blob/master/LICENSE
   $ = jQuery;
 
   EkkoLightbox = function(element, options) {
-    var content, footer, header,
+    var close, content, footer, header, url, url_expand,
       _this = this;
     this.options = $.extend({
       title: null,
@@ -23,7 +23,9 @@ License: https://github.com/ashleydw/lightbox/blob/master/LICENSE
     this.$element = $(element);
     content = '';
     this.modal_id = this.options.modal_id ? this.options.modal_id : 'ekkoLightbox-' + Math.floor((Math.random() * 1000) + 1);
-    header = '<div class="modal-header"' + (this.options.title || this.options.always_show_close ? '' : ' style="display:none"') + '><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">' + (this.options.title || "&nbsp;") + '</h4></div>';
+    url_expand = '<button type="button" class="close url" data-dismiss="modal" aria-hidden="true" style="margin-right:10px"><span class="glyphicon glyphicon-fullscreen"></span></button>';
+    close = '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>';
+    header = '<div class="modal-header"' + (this.options.title || this.options.always_show_close ? '' : ' style="display:none"') + '>' + close + (this.options.url ? url_expand : '') + '<h4 class="modal-title">' + (this.options.title || "&nbsp;") + '</h4></div>';
     footer = '<div class="modal-footer"' + (this.options.footer ? '' : ' style="display:none"') + '>' + this.options.footer + '</div>';
     $(document.body).append('<div id="' + this.modal_id + '" class="ekko-lightbox modal fade" tabindex="-1"><div class="modal-dialog"><div class="modal-content">' + header + '<div class="modal-body"><div class="ekko-lightbox-container"><div></div></div></div>' + footer + '</div></div></div>');
     this.modal = $('#' + this.modal_id);
@@ -46,6 +48,10 @@ License: https://github.com/ashleydw/lightbox/blob/master/LICENSE
       bottom: parseFloat(this.modal_dialog.css('padding-bottom')) + parseFloat(this.modal_content.css('padding-bottom')) + parseFloat(this.modal_body.css('padding-bottom')),
       left: parseFloat(this.modal_dialog.css('padding-left')) + parseFloat(this.modal_content.css('padding-left')) + parseFloat(this.modal_body.css('padding-left'))
     };
+    url = this.options.url;
+    this.modal.find('.url').click(function() {
+      return window.open(url);
+    });
     this.modal.on('show.bs.modal', this.options.onShow.bind(this)).on('shown.bs.modal', function() {
       _this.modal_shown();
       return _this.options.onShown.call(_this);
@@ -329,7 +335,8 @@ License: https://github.com/ashleydw/lightbox/blob/master/LICENSE
       options = $.extend({
         remote: $this.attr('data-remote') || $this.attr('href'),
         gallery_parent_selector: $this.attr('data-parent'),
-        type: $this.attr('data-type')
+        type: $this.attr('data-type'),
+        url: $this.attr('data-url')
       }, options, $this.data());
       new EkkoLightbox(this, options);
       return this;
